@@ -1,0 +1,92 @@
+const { comparePass } = require("../helpers/bcrypt");
+const { signToken } = require("../helpers/jwt");
+const { User, WatchLists, Movies } = require("../models");
+
+class AllController {
+   static async register(req, res, next) {
+      try {
+         const { id, email } = req.body;
+         const user = await User.create(req.body);
+         res.status(201).json({ id, email });
+      } catch (error) {
+         next(error);
+      }
+   }
+
+   static async login(req, res, next) {
+      try {
+         const { email, password } = req.body;
+         if (!email) {
+            throw { name: "EmailRequired" };
+         }
+         if (!password) {
+            throw { name: "PasswordRequired" };
+         }
+
+         const user = await User.findOne({ where: { email } });
+         if (!user) {
+            throw { name: "Unauthorized" };
+         }
+
+         const comparedPassword = comparePass(password, user.password);
+
+         if (!comparedPassword) {
+            throw { name: "Unauthorized" };
+         }
+         const access_token = signToken({ id: user.id });
+
+         res.status(200).json({ message: "succes login ", access_token });
+      } catch (error) {
+         next(error);
+      }
+   }
+   static async getAllMovies(req, res, next) {
+      try {
+         const movies = await Movies.findAll();
+         res.status(200).json(movies);
+      } catch (error) {
+         next(error);
+      }
+   }
+
+   static async addFavoriteMovie(req, res, next) {
+      try {
+         const { movieId } = req.params;
+         const { userId } = req.user; // Anggap saja Anda telah mengimplementasikan middleware untuk mengekstrak userId dari token
+
+         // Periksa apakah movieId yang diberikan valid
+         const movie = await Movies.findByPk(movieId);
+         if (!movie) {
+            throw { name: "Not Found" };
+         }
+
+         // Periksa apakah movie sudah ada di watchlist user
+         const existingWatchList = await WatchLists.findOne({ where: { userId, movieId } });
+         if (existingWatchList) {
+            throw { name: "BadRequest" };
+         }
+
+         // Tambahkan movie ke watchlist user
+         await WatchLists.create({ userId, movieId });
+
+         res.status(201).json({ message: "Movie added to watchlist successfully" });
+      } catch (error) {
+         next(error);
+      }
+   }
+
+   static async getAllWatchLists(req, res, next) {
+      try {
+         const { userId } = req.user; // Mengekstrak userId dari informasi pengguna yang telah diautentikasi
+
+         // Dapatkan semua daftar watchlist yang terkait dengan userId yang diberikan
+         const watchLists = await WatchLists.findAll({ where: { userId } });
+
+         res.status(200).json(watchLists);
+      } catch (error) {
+         next(error);
+      }
+   }
+}
+
+module.exports = AllController;
