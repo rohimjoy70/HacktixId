@@ -8,6 +8,10 @@ const { authorization } = require("../midlewares/authorization");
 //User routes
 router.post("/register", Controller.register);
 router.post("/login", Controller.login);
+router.use(auth);
+router.get("/movies", Controller.getAllMovies);
+router.post("/watchlist/:movieId", Controller.addFavoriteMovie);
+router.get("/watchlists", Controller.getAllWatchLists);
 
 router.use(errorHandler);
 

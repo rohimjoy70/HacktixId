@@ -51,22 +51,18 @@ class AllController {
 
    static async addFavoriteMovie(req, res, next) {
       try {
+         const userId = req.user.id;
          const { movieId } = req.params;
-         const { userId } = req.user; // Anggap saja Anda telah mengimplementasikan middleware untuk mengekstrak userId dari token
-
-         // Periksa apakah movieId yang diberikan valid
          const movie = await Movies.findByPk(movieId);
          if (!movie) {
             throw { name: "Not Found" };
          }
 
-         // Periksa apakah movie sudah ada di watchlist user
          const existingWatchList = await WatchLists.findOne({ where: { userId, movieId } });
          if (existingWatchList) {
             throw { name: "BadRequest" };
          }
 
-         // Tambahkan movie ke watchlist user
          await WatchLists.create({ userId, movieId });
 
          res.status(201).json({ message: "Movie added to watchlist successfully" });
