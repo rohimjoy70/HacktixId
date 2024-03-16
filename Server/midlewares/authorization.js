@@ -18,4 +18,20 @@ const authorization = async (req, res, next) => {
    }
 };
 
-module.exports = { authorization };
+const authorizationWatchList = async (req, res, next) => {
+   try {
+      const { user } = req;
+
+      const watchlists = await WatchLists.findAll({ where: { userId: user.id } });
+
+      if (!watchlists || watchlists.length === 0) {
+         throw { name: "Not Found" };
+      }
+
+      next();
+   } catch (error) {
+      next(error);
+   }
+};
+
+module.exports = { authorization, authorizationWatchList };

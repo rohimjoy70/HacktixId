@@ -19,10 +19,13 @@ const errorHandler = (error, req, res, next) => {
          break;
       case "Not Found":
          res.status(404).json({ message: "Movie not found" });
+         break;
       case "BadRequest":
          res.status(404).json({ message: "Movie already exists in watchlist" });
+         break;
       case "Forbidden":
-         return res.status(403).json({ message: "You are not authorized" });
+         res.status(403).json({ message: "You are not authorized" });
+         break;
       default:
          console.log(error);
          res.status(500).json({ message: "Internal server error" });
