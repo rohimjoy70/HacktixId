@@ -11,8 +11,8 @@ router.post("/login", Controller.login);
 router.use(auth);
 router.get("/movies", Controller.getAllMovies);
 router.post("/watchlist/:movieId", Controller.addFavoriteMovie);
-router.get("/watchlists", authorizationWatchList, Controller.getAllWatchLists);
-router.patch("/watchlists/:id", authorization, Controller.updateWatchList);
+router.get("/watchlist", authorizationWatchList, Controller.getAllWatchLists);
+router.patch("/watchlist/:id", authorization, Controller.updateWatchList);
 
 router.use(errorHandler);
 

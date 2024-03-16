@@ -72,16 +72,39 @@ class AllController {
    }
 
    static async getAllWatchLists(req, res, next) {
-      try {
-         const userId = req.user.id;
+   try {
+      const userId = req.user.id;
 
-         const watchLists = await WatchLists.findAll({ where: { userId } });
+      const watchLists = await WatchLists.findAll({ where: { userId } });
 
-         res.status(200).json(watchLists);
-      } catch (error) {
-         next(error);
+      // Array untuk menampung detail movie dari setiap watchlist
+      const watchListsDetails = [];
+      
+      // Iterasi melalui setiap watchlist
+      for (const watchlist of watchLists) {
+         // Dapatkan detail movie berdasarkan movieId dari watchlist
+         const movie = await Movies.findByPk(watchlist.movieId);
+         
+         // Jika movie ditemukan, tambahkan ke array watchListsDetails
+         if (movie) {
+            watchListsDetails.push({
+               id: watchlist.id,
+               userId: watchlist.userId,
+               movieId: watchlist.movieId,
+               status: watchlist.status,
+               createdAt: watchlist.createdAt,
+               updatedAt: watchlist.updatedAt,
+               movie: movie // Detail movie
+            });
+         }
       }
+
+      res.status(200).json(watchListsDetails);
+   } catch (error) {
+      next(error);
    }
+}
+
 
    static async updateWatchList(req, res, next) {
       try {
