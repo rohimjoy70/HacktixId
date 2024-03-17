@@ -16,7 +16,7 @@ const WatchlistCard = ({ watchlist }) => {
    const handleWatchNow = async () => {
       try {
          await axios.patch(
-            `http://localhost:3000/watchlist/${id}`,
+            `https://hacktixid.healtjoy.online/watchlist/${id}`,
             {
                status: "watched",
             },

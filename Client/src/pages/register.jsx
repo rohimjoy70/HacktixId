@@ -20,7 +20,7 @@ export default function RegisterPage() {
       try {
          const { data } = await axios({
             method: "post",
-            url: "http://localhost:3000/register",
+            url: "https://hacktixid.healtjoy.online/register",
             data: inputUser,
          });
          Success("Your account success to register");

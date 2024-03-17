@@ -20,7 +20,7 @@ export default function LoginPage() {
       try {
          const { data } = await axios({
             method: "post",
-            url: "http://localhost:3000/login",
+            url: "https://hacktixid.healtjoy.online/login",
             data: inputUser,
          });
          Success("Success login");

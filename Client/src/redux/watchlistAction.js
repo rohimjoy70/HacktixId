@@ -28,7 +28,7 @@ export const fetchWatchlist = () => {
    return (dispatch) => {
       dispatch(fetchWatchlistRequest());
       axios
-         .get("http://localhost:3000/watchlist", {
+         .get("https://hacktixid.healtjoy.online/watchlist", {
             headers: {
                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },

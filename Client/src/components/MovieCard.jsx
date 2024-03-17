@@ -12,22 +12,24 @@ function MovieCard({ movie, watchlist }) {
 
    const addWatchlist = async (movieId) => {
       try {
-         const validasi = validateAddWatchlist(movieId);
-         if (!validasi) {
-            throw { response: { data: { message: "You already added this to your watchlist" } } };
+         const isValid = validateAddWatchlist(movieId);
+         if (!isValid) {
+            throw new Error("You already added this movie to your watchlist");
          }
-         await axios({
-            method: "post",
-            url: `http://localhost:3000/watchlist/${movieId}`,
-            headers: {
-               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-         });
-         Success("Success add to your watchlist");
+         await axios.post(
+            `https://hacktixid.healtjoy.online/watchlist/${movieId}`,
+            {},
+            {
+               headers: {
+                  Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+               },
+            }
+         );
+         Success("Movie added to watchlist successfully");
          navigate("/Watchlist");
       } catch (error) {
          console.log(error);
-         const message = error.response.data.message;
+         const message = error.response ? error.response.data.message : "Failed to add movie to watchlist. Please try again later.";
          Error(message);
       }
    };
@@ -49,7 +51,12 @@ function MovieCard({ movie, watchlist }) {
 }
 
 MovieCard.propTypes = {
-   movie: PropTypes.object.isRequired,
+   movie: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      title: PropTypes.string.isRequired,
+      genre: PropTypes.string.isRequired,
+      posterUrl: PropTypes.string.isRequired,
+   }).isRequired,
    watchlist: PropTypes.array.isRequired,
 };
 
