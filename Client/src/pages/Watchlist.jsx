@@ -1,32 +1,16 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchWatchlist } from "../redux/watchlistAction";
 import { Error } from "../helpers/Alerts";
 import WatchlistCard from "../components/WatchlistCard";
 
 export default function WatchlistPage() {
-   const [watchlist, setWatchlist] = useState([]);
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState(null);
-
-   const getWatchlist = async () => {
-      try {
-         const { data } = await axios.get("http://localhost:3000/watchlist", {
-            headers: {
-               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-         });
-         setWatchlist(data);
-         setLoading(false);
-      } catch (error) {
-         console.log(error);
-         setError("Failed to fetch watchlist. Please try again later.");
-         setLoading(false);
-      }
-   };
+   const dispatch = useDispatch();
+   const { watchlist, loading, error } = useSelector((state) => state.watchlist);
 
    useEffect(() => {
-      getWatchlist();
-   }, []);
+      dispatch(fetchWatchlist());
+   }, [dispatch]);
 
    if (loading) {
       return <div className="container mx-auto mt-8 text-center">Loading...</div>;
